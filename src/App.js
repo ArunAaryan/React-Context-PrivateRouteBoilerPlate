@@ -1,23 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-
+import React, { useState } from "react";
+import RouteHelper from "./RouteHelper";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { userContext } from "./context";
 function App() {
+  const [user, setUser] = useState(null);
+  const handleLogout = () => {
+    setUser(null);
+  };
+  const handleLogin = async () => {
+    await fetch("https://jsonplaceholder.typicode.com/users/1").then((res) => {
+      res.json().then((data) => {
+        setUser(data);
+      });
+    });
+  };
   return (
-    <div className="text-center">
-      <header className="bg-gray-800 text-white flex flex-col items-center justify-center min-h-screen text-3xl">
-        <img src={logo} className="pointer-events-none h-40 animate-spin" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="text-blue-400"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App">
+      <userContext.Provider
+        value={{
+          user: user,
+          handleLogin: handleLogin,
+          handleLogout: handleLogout,
+        }}
+      >
+        <RouteHelper />
+      </userContext.Provider>
     </div>
   );
 }
